@@ -1,0 +1,46 @@
+TODO
+=========
+
+built-in commands :
+----------
+basic :
+	1. echo		x
+	2. exit		x
+	3. cd pwd	x
+advanced :
+	1. kill
+
+===========
+
+features :
+-----------
+basic :
+	1. <> | &
+advanced :
+	1. many <> | exist and the shell can deal with the errors
+
+==========
+
+some other commands :
+----------
+basic :
+	1. ls		x
+	2. cat		x
+	3. xargs
+	4. touch	x
+	5. mkdir	x
+	all these command files will be restored in a fixed directory.
+
+advanced :
+	1. environment export
+	2. ls -l
+	3. less
+	4. xargs -d
+	5. cp mv rm ln ln -s
+
+==========
+
+colors :
+----------
+	etc...
+
