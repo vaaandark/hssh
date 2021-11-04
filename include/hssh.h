@@ -44,8 +44,8 @@ struct hssh_info {
 };
 
 struct env_path {
-    char *path;
-    struct env_path *next;
+	char *path;
+	struct env_path *next;
 };
 
 

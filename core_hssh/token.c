@@ -13,7 +13,7 @@ struct token *init_token(char *p)
 	struct token *t = (struct token*)malloc(sizeof(struct token)); 
 	t->part = p;
 	t->next = NULL;
-    return t;
+	return t;
 }
 
 void push_token(struct token **header, struct token **cur_token, struct token *new_token)
@@ -23,9 +23,9 @@ void push_token(struct token **header, struct token **cur_token, struct token *n
 		(*cur_token) = new_token;
 	} else {
 		*cur_token = new_token;
-        if (!(*header)) {
-            *header = new_token;
-        }
+		if (!(*header)) {
+			*header = new_token;
+		}
 	}
 }
 
@@ -49,7 +49,7 @@ void split(char *command)
 	bool is_excape = FALSE;
 	bool has_begun = FALSE;
 	struct token *cur_token = NULL;
-    struct token *header= NULL;
+	struct token *header= NULL;
 	int cur_token_pos = 0;
 	int cur_token_size = TOKENSIZE;
 	struct special_characters *cur = NULL;
@@ -97,9 +97,9 @@ void split(char *command)
 					++argc;
 					push_token(&header, &cur_token, tok2);
 
-            	    has_begun = TRUE;
+					has_begun = TRUE;
 					++cur_token_pos;
-            	    break;
+					break;
 				}
 			}
 		} else {
@@ -119,9 +119,9 @@ void split(char *command)
 						cur_token_pos = 0;
 						has_begun = FALSE;
 						break;
-                    case '\\':
-                        is_excape = TRUE;
-                        break;
+					case '\\':
+						is_excape = TRUE;
+						break;
 					case '|':
 					case '<':
 					case '>':
@@ -148,19 +148,19 @@ void split(char *command)
 		}
 	}
 
-    if (has_begun) {
-        cur_token->part[cur_token_pos] = '\0';
-    }
+	if (has_begun) {
+		cur_token->part[cur_token_pos] = '\0';
+	}
 
 
 	info->argc = argc;
 	info->argv = (char**)malloc(sizeof(char*) * argc);
 	
 	int i;
-    for (i = 0; i < argc; i++) {
+	for (i = 0; i < argc; i++) {
 		info->argv[i] = header->part;
 		struct token *del = header;
-        header = header->next;
+		header = header->next;
 		free(del);
-    }
+	}
 }

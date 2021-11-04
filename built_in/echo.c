@@ -11,9 +11,9 @@
 
 void hssh_echo(int argc, char *argv[])
 {
-    int i;
-    for (i = 1; i < argc - 1; ++i) {
-        printf("%s ", argv[i]);
-    }
-    printf("%s\n", argv[i]);
+	int i;
+	for (i = 1; i < argc - 1; ++i) {
+		printf("%s ", argv[i]);
+	}
+	printf("%s\n", argv[i]);
 }

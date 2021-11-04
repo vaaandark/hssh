@@ -12,7 +12,7 @@
 int main(int argc, char *argv[])
 {
 	if(argc == 1) {
-        printf("touch: missing file operand\n");
+		printf("touch: missing file operand\n");
 		return(1);
 	}
 	int i;
