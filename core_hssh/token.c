@@ -29,7 +29,7 @@ void push_token(struct token **header, struct token **cur_token, struct token *n
 	}
 }
 
-struct special_characters *push_spcl_ch(struct special_characters *cur, int argc)
+struct special_characters *push_spcl_ch(struct special_characters *cur, int argc, char ch)
 {
 	struct special_characters *spcl_ch = (struct special_characters*)malloc(sizeof(struct special_characters));
 	spcl_ch->next = NULL;
@@ -38,6 +38,19 @@ struct special_characters *push_spcl_ch(struct special_characters *cur, int argc
 		info->spcl_ch = spcl_ch;
 	} else {
 		cur->next = spcl_ch;
+	}
+	switch (ch) {
+	case '|':
+		spcl_ch->ch_type = PIPE;
+		break;
+	case '>':
+		spcl_ch->ch_type = OUTPUT_REDIRECT;
+		break;
+	case '<':
+		spcl_ch->ch_type = INPUT_REDIRECT;
+		break;
+	default:
+		break;
 	}
 	return spcl_ch;
 }
@@ -48,6 +61,7 @@ void split(char *command)
 	char **argv = (char**)malloc(ARGVSIZE * sizeof(char*));
 	bool is_excape = FALSE;
 	bool has_begun = FALSE;
+	bool is_redirct = FALSE;
 	struct token *cur_token = NULL;
 	struct token *header= NULL;
 	int cur_token_pos = 0;
@@ -61,9 +75,13 @@ void split(char *command)
 				s[0] = ch;
 				++cur_token_pos;
 
-				struct token *tok = init_token(s);
-				++argc;
-				push_token(&header, &cur_token, tok);
+				if (is_redirct) {
+					cur->opt_file_name = s;
+				} else {
+					struct token *tok = init_token(s);
+					++argc;
+					push_token(&header, &cur_token, tok);
+				}
 
 				has_begun = TRUE;
 				is_excape = FALSE;
@@ -73,29 +91,28 @@ void split(char *command)
 				case '\t':
 					break;
 				case '|':
+					cur = push_spcl_ch(cur, argc, ch);
+					has_begun = FALSE;
+					break;
 				case '>':
 				case '<':
-					char *s1 = (char*)malloc(sizeof(char) * 2);
-					s1[0] = ch;
-					s1[1] = '\0';
-
-
-					struct token *tok1 = init_token(s1);
-					cur = push_spcl_ch(cur, argc);
-					++argc;
-					push_token(&header, &cur_token, tok1);
-
+					cur = push_spcl_ch(cur, argc, ch);
+					is_redirct = TRUE;
+					has_begun = FALSE;
 					break;
 				case '\\':
 					is_excape = TRUE;
 					break;
 				default:
-					char *s2 = (char*)malloc(sizeof(char) * cur_token_size);
-					s2[0] = ch;
-
-					struct token *tok2 = init_token(s2);
-					++argc;
-					push_token(&header, &cur_token, tok2);
+					char *s = (char*)malloc(sizeof(char) * cur_token_size);
+					s[0] = ch;
+					if (is_redirct) {
+						cur->opt_file_name = s;
+					} else {
+						struct token *tok = init_token(s);
+						++argc;
+						push_token(&header, &cur_token, tok);
+					}
 
 					has_begun = TRUE;
 					++cur_token_pos;
@@ -115,7 +132,12 @@ void split(char *command)
 				switch (ch) {
 					case ' ':
 					case '\t':
-						cur_token->part[cur_token_pos] = '\0';
+						if (is_redirct) {
+							cur->opt_file_name[cur_token_pos] = '\0';
+							is_redirct = FALSE;
+						} else {
+							cur_token->part[cur_token_pos] = '\0';
+						}
 						cur_token_pos = 0;
 						has_begun = FALSE;
 						break;
@@ -123,25 +145,32 @@ void split(char *command)
 						is_excape = TRUE;
 						break;
 					case '|':
-					case '<':
-					case '>':
 						cur_token->part[cur_token_pos] = '\0';
 
-						char *s = (char*)malloc(sizeof(char) * 2);
-						s[0] = ch;
-						s[1] = '\0';
-
-						struct token *tok = init_token(s);
-						cur = push_spcl_ch(cur, argc);
-						++argc;
-						push_token(&header, &cur_token, tok);
+						cur = push_spcl_ch(cur, argc, ch);
 
 						cur_token_pos = 0;
 						has_begun = FALSE;
 
 						break;
+					case '<':
+					case '>':
+						cur_token->part[cur_token_pos] = '\0';
+
+						cur = push_spcl_ch(cur, argc, ch);
+
+						cur_token_pos = 0;
+						has_begun = FALSE;
+
+						is_redirct = TRUE;
+
+						break;
 					default:
-						cur_token->part[cur_token_pos] = ch;
+						if (is_redirct) {
+							cur->opt_file_name[cur_token_pos] = ch;
+						} else {
+							cur_token->part[cur_token_pos] = ch;
+						}
 						++cur_token_pos;
 				}
 			}
@@ -149,7 +178,11 @@ void split(char *command)
 	}
 
 	if (has_begun) {
-		cur_token->part[cur_token_pos] = '\0';
+		if (is_redirct) {
+			cur->opt_file_name[cur_token_pos] = '\0';
+		} else {
+			cur_token->part[cur_token_pos] = '\0';
+		}
 	}
 
 

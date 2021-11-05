@@ -2,14 +2,14 @@ includes = ../include
 built_ins = ../built_in
 binaries = ../bin
 
-objects = main.o hssh.o get_input.o cmd.o token.o $(built_ins)/echo.o $(built_ins)/exit.o $(built_ins)/pwd.o $(built_ins)/cd.o
+objects = main.o hssh.o cmd.o token.o $(built_ins)/echo.o $(built_ins)/exit.o $(built_ins)/pwd.o $(built_ins)/cd.o
 
 $(shell mkdir -p ../bin)
 
 all: core ls cat touch mkdir
 
 core: $(objects)
-	cc -o core $(objects)
+	cc -o core $(objects) -lreadline
 
 ls: ../ls/ls.o
 	cc -o $(binaries)/ls ../ls/ls.o
@@ -23,7 +23,7 @@ touch: ../touch/touch.o
 mkdir: ../mkdir/mkdir.o
 	cc -o $(binaries)/mkdir ../mkdir/mkdir.o
 
-main.o: $(includes)/cmd.h $(includes)/get_input.h
+main.o: $(includes)/cmd.h
 
 hssh.o: $(includes)/color.h $(includes)/hsshdef.h
 cmd.o:	$(includes)/exit.h $(includes)/pwd.h $(includes)/cd.h $(includes)/ls.h
@@ -36,5 +36,4 @@ pwd.o:	$(includes)/hssh.h
 .PHONY: clean
 
 clean:
-	rm -rf core $(binaries) $(objects) ../ls/ls.o
-
+	rm -rf core $(binaries) $(objects) ../ls/ls.o ../mkdir/mkdir.o ../touch/touch.o ../cat/cat.o

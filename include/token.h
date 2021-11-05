@@ -12,6 +12,7 @@
 #include "hssh.h"
 
 extern struct hssh_info *info;
+extern char *PS1;
 
 struct token {
 	char *part;
@@ -20,7 +21,7 @@ struct token {
 
 void push_token(struct token **header, struct token **cur_token, struct token *new_token);
 
-struct special_characters *push_spcl_ch(struct special_characters *cur, int argc);
+struct special_characters *push_spcl_ch(struct special_characters *cur, int argc, char ch);
 
 struct token *init_token(char *p);
 

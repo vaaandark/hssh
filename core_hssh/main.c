@@ -6,25 +6,44 @@
  * License: GPL-2.0
  */
 
-#include "../include/get_input.h"
 #include "../include/cmd.h"
 #include "../include/token.h"
 
 struct hssh_info *info;
 bool is_exit;
+bool is_signal;
 char *command;
+char *PS1;
 
 int main(void)
 {
 	hssh_init();
 	while (is_exit == FALSE) {
 		hssh_update();
-		print_prompt();
-		command = get_input(BUFFERSIZE);
+		command = readline(PS1);
+		add_history(command);
+		if (!command) {
+			printf("exit\n");
+			break;
+		}
 		split(command);
 		free(command);
 		command = NULL;
-		exec_command(info->argc, info->argv);
+		struct special_characters *sspcl_ch = info->spcl_ch;
+		// int i;
+		// for (i = 0; i < info->argc; ++i) {
+			// printf("%s\n", info->argv[i]);
+		// }
+		// while (sspcl_ch) {
+			// printf("第%d位是第%d个特殊符号\n", sspcl_ch->pos, sspcl_ch->ch_type);
+			// sspcl_ch = sspcl_ch->next;
+		// }
+		struct special_characters *spcl_ch = info->spcl_ch;
+		if (!spcl_ch) {
+			exec_command(info->argc, info->argv);
+		} else {
+			
+		}
 	}
 	return 0;
 }

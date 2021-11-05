@@ -12,6 +12,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <sys/wait.h>
 #include "echo.h"
 #include "exit.h"
 #include "pwd.h"
@@ -21,5 +22,7 @@
 extern struct hssh_info *info;
 
 void exec_command(int argc, char *argv[]);
+
+void another_line(int);
 
 #endif /* CMD_H_ */

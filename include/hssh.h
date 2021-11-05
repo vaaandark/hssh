@@ -16,21 +16,37 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "hsshdef.h"
 #include "color.h"
 
-#define MAXUSERIDSIZE	10
-#define MAXHOSTNAMESIZE	10
+#define MAXUSERIDSIZE	16
+#define MAXHOSTNAMESIZE	16
 #define MAXPATHSIZE	64
+#define MAXPROMPTSIZE 265
 #define BUFFERSIZE	64
 #define ARGVSIZE	4
 #define TOKENSIZE	16
 
 extern bool is_exit;
+extern bool is_signal;
+
+extern char *PS1;
+
+enum spcl_ch_type {
+	PIPE = 0,
+	OUTPUT_REDIRECT,
+	INPUT_REDIRECT
+};
 
 struct special_characters {
 	int pos;
 	struct special_characters *next;
+	enum spcl_ch_type ch_type;
+	char *opt_file_name;
 };
 
 struct hssh_info {
@@ -54,8 +70,6 @@ extern struct hssh_info *info;
 void hssh_init(void);
 
 void hssh_update(void);
-
-void print_prompt(void);
 
 extern struct env_path *env_path_header;
 
