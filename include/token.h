@@ -21,7 +21,9 @@ struct token {
 
 void push_token(struct token **header, struct token **cur_token, struct token *new_token);
 
-struct special_characters *push_spcl_ch(struct special_characters *cur, int argc, char ch);
+struct redirct_symbol *push_redir_symbl(struct redirct_symbol *redir_cur, int argc, char ch);
+
+struct pipe_symbol *push_pipe_symbl(struct pipe_symbol *pipe_cur, int argc);
 
 struct token *init_token(char *p);
 

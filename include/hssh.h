@@ -36,18 +36,23 @@ extern bool is_signal;
 
 extern char *PS1;
 
-enum spcl_ch_type {
-	PIPE = 0,
-	OUTPUT_REDIRECT,
+enum redir_type {
+	OUTPUT_REDIRECT = 0,
 	INPUT_REDIRECT
 };
 
-struct special_characters {
+struct pipe_symbol {
 	int pos;
-	struct special_characters *next;
-	enum spcl_ch_type ch_type;
+	struct pipe_symbol *next;
+};
+
+struct redirct_symbol {
+	int pos;
+	struct redirct_symbol *next;
+	enum redir_type type;
 	char *opt_file_name;
 };
+
 
 struct hssh_info {
 	char user_id[MAXUSERIDSIZE];
@@ -56,7 +61,8 @@ struct hssh_info {
 	char home_dir[MAXPATHSIZE];
 	char **argv;
 	char argc;
-	struct special_characters *spcl_ch;
+	struct pipe_symbol *pipe_symbl;
+	struct redirct_symbol *redir_symbl;
 };
 
 struct env_path {

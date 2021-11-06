@@ -29,30 +29,40 @@ void push_token(struct token **header, struct token **cur_token, struct token *n
 	}
 }
 
-struct special_characters *push_spcl_ch(struct special_characters *cur, int argc, char ch)
+struct redirct_symbol *push_redir_symbl(struct redirct_symbol *redir_cur, int argc, char ch)
 {
-	struct special_characters *spcl_ch = (struct special_characters*)malloc(sizeof(struct special_characters));
-	spcl_ch->next = NULL;
-	spcl_ch->pos = argc;
-	if (!info->spcl_ch) {
-		info->spcl_ch = spcl_ch;
-	} else {
-		cur->next = spcl_ch;
-	}
+	struct redirct_symbol *redir_symbl = (struct redirct_symbol*)malloc(sizeof(struct redirct_symbol));
+	redir_symbl->next = NULL;
+	redir_symbl->pos = argc;
 	switch (ch) {
-	case '|':
-		spcl_ch->ch_type = PIPE;
-		break;
 	case '>':
-		spcl_ch->ch_type = OUTPUT_REDIRECT;
+		redir_symbl->type = OUTPUT_REDIRECT;
 		break;
 	case '<':
-		spcl_ch->ch_type = INPUT_REDIRECT;
+		redir_symbl->type = INPUT_REDIRECT;
 		break;
 	default:
 		break;
 	}
-	return spcl_ch;
+	if (!info->redir_symbl) {
+		info->redir_symbl = redir_symbl;
+	} else {
+		redir_cur->next = redir_symbl;
+	}
+	return redir_symbl;
+}
+
+struct pipe_symbol *push_pipe_symbl(struct pipe_symbol *pipe_cur, int argc)
+{
+	struct pipe_symbol *pipe_symbl = (struct pipe_symbol*)malloc(sizeof(struct pipe_symbol));
+	pipe_symbl->next = NULL;
+	pipe_symbl->pos = argc;
+	if (!info->pipe_symbl) {
+		info->pipe_symbl = pipe_symbl;
+	} else {
+		pipe_cur->next = pipe_symbl;
+	}
+	return pipe_symbl;
 }
 
 void split(char *command)
@@ -66,8 +76,9 @@ void split(char *command)
 	struct token *header= NULL;
 	int cur_token_pos = 0;
 	int cur_token_size = TOKENSIZE;
-	struct special_characters *cur = NULL;
-	for (pos = 0; command[pos] != '\0'; pos++) {
+	struct pipe_symbol *pipe_cur = NULL;
+	struct redirct_symbol *redir_cur = NULL;
+	for (pos = 0; command[pos] != '\0'; ++pos) {
 		char ch = command[pos];
 		if (!has_begun) {
 			if (is_excape) {
@@ -76,7 +87,7 @@ void split(char *command)
 				++cur_token_pos;
 
 				if (is_redirct) {
-					cur->opt_file_name = s;
+					redir_cur->opt_file_name = s;
 				} else {
 					struct token *tok = init_token(s);
 					++argc;
@@ -91,14 +102,12 @@ void split(char *command)
 				case '\t':
 					break;
 				case '|':
-					cur = push_spcl_ch(cur, argc, ch);
-					has_begun = FALSE;
+					pipe_cur = push_pipe_symbl(pipe_cur, argc);
 					break;
 				case '>':
 				case '<':
-					cur = push_spcl_ch(cur, argc, ch);
+					redir_cur = push_redir_symbl(redir_cur, argc, ch);
 					is_redirct = TRUE;
-					has_begun = FALSE;
 					break;
 				case '\\':
 					is_excape = TRUE;
@@ -107,7 +116,7 @@ void split(char *command)
 					char *s = (char*)malloc(sizeof(char) * cur_token_size);
 					s[0] = ch;
 					if (is_redirct) {
-						cur->opt_file_name = s;
+						redir_cur->opt_file_name = s;
 					} else {
 						struct token *tok = init_token(s);
 						++argc;
@@ -133,7 +142,7 @@ void split(char *command)
 					case ' ':
 					case '\t':
 						if (is_redirct) {
-							cur->opt_file_name[cur_token_pos] = '\0';
+							redir_cur->opt_file_name[cur_token_pos] = '\0';
 							is_redirct = FALSE;
 						} else {
 							cur_token->part[cur_token_pos] = '\0';
@@ -145,9 +154,14 @@ void split(char *command)
 						is_excape = TRUE;
 						break;
 					case '|':
-						cur_token->part[cur_token_pos] = '\0';
+						if (is_redirct) {
+							redir_cur->opt_file_name[cur_token_pos] = '\0';
+							is_redirct = FALSE;
+						} else {
+							cur_token->part[cur_token_pos] = '\0';
+						}
 
-						cur = push_spcl_ch(cur, argc, ch);
+						pipe_cur = push_pipe_symbl(pipe_cur, argc);
 
 						cur_token_pos = 0;
 						has_begun = FALSE;
@@ -155,9 +169,13 @@ void split(char *command)
 						break;
 					case '<':
 					case '>':
-						cur_token->part[cur_token_pos] = '\0';
+						if (is_redirct) {
+							redir_cur->opt_file_name[cur_token_pos] = '\0';
+						} else {
+							cur_token->part[cur_token_pos] = '\0';
+						}
 
-						cur = push_spcl_ch(cur, argc, ch);
+						redir_cur = push_redir_symbl(redir_cur, argc, ch);
 
 						cur_token_pos = 0;
 						has_begun = FALSE;
@@ -167,7 +185,7 @@ void split(char *command)
 						break;
 					default:
 						if (is_redirct) {
-							cur->opt_file_name[cur_token_pos] = ch;
+							redir_cur->opt_file_name[cur_token_pos] = ch;
 						} else {
 							cur_token->part[cur_token_pos] = ch;
 						}
@@ -179,7 +197,7 @@ void split(char *command)
 
 	if (has_begun) {
 		if (is_redirct) {
-			cur->opt_file_name[cur_token_pos] = '\0';
+			redir_cur->opt_file_name[cur_token_pos] = '\0';
 		} else {
 			cur_token->part[cur_token_pos] = '\0';
 		}

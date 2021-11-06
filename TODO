@@ -26,7 +26,7 @@ some other commands :
 basic :
 	1. ls		x
 	2. cat		x
-	3. xargs
+	3. xargs	x
 	4. touch	x
 	5. mkdir	x
 	all these command files will be restored in a fixed directory.

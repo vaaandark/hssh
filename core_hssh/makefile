@@ -6,7 +6,7 @@ objects = main.o hssh.o cmd.o token.o $(built_ins)/echo.o $(built_ins)/exit.o $(
 
 $(shell mkdir -p ../bin)
 
-all: core ls cat touch mkdir
+all: core ls cat touch mkdir xargs
 
 core: $(objects)
 	cc -o core $(objects) -lreadline
@@ -23,6 +23,9 @@ touch: ../touch/touch.o
 mkdir: ../mkdir/mkdir.o
 	cc -o $(binaries)/mkdir ../mkdir/mkdir.o
 
+xargs: ../xargs/xargs.o
+	cc -o $(binaries)/xargs ../xargs/xargs.o
+
 main.o: $(includes)/cmd.h
 
 hssh.o: $(includes)/color.h $(includes)/hsshdef.h
@@ -36,4 +39,4 @@ pwd.o:	$(includes)/hssh.h
 .PHONY: clean
 
 clean:
-	rm -rf core $(binaries) $(objects) ../ls/ls.o ../mkdir/mkdir.o ../touch/touch.o ../cat/cat.o
+	rm -rf core $(binaries) $(objects) ../ls/ls.o ../mkdir/mkdir.o ../touch/touch.o ../cat/cat.o ../xargs/xargs.o

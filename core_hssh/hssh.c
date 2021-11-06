@@ -22,7 +22,8 @@ void hssh_init(void)
     
     /* fill up the shell information */
     info = (struct hssh_info*)malloc(sizeof(struct hssh_info));	
-    info->spcl_ch = NULL;
+    info->pipe_symbl = NULL;
+    info->redir_symbl = NULL;
     struct passwd *pwd = getpwuid(getuid());
     strcpy(info->user_id, pwd->pw_name);
     strcpy(info->home_dir, pwd->pw_dir);
@@ -43,11 +44,4 @@ void hssh_update(void)
     PS1 = (char*)malloc(sizeof(char) * MAXPROMPTSIZE);
     sprintf(PS1, COLOR_PURPLE "[hssh] " COLOR_BBLUE "%s" COLOR_NONE "@" "%s" " " COLOR_BWHITE "%s" COLOR_NONE "\n$ ", info->user_id, info->hostname, info->work_dir);
 
-    struct special_characters *spcl_ch = info->spcl_ch;
-    while (spcl_ch) {
-        struct special_characters *del = spcl_ch;
-        spcl_ch = spcl_ch->next;
-        free(del);
-    }
-    info->spcl_ch = NULL;	
 }

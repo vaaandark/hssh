@@ -9,7 +9,7 @@
 
 #include "../include/cmd.h"
 
-void exec_command(int argc, char *argv[])
+bool exec_built_in_command(int argc, char *argv[])
 {
 	if (strcmp(argv[0], "exit") == 0) {
 		hssh_exit();
@@ -20,25 +20,21 @@ void exec_command(int argc, char *argv[])
 	} else if (strcmp(argv[0], "cd") == 0) {
 		hssh_cd(argc, argv);
 	} else {
-		char **aargv = (char**)malloc(sizeof(char*) * (argc + 1));
-		int i;
-		for (i = 0; i < argc; ++i) {
-			aargv[i] = argv[i];
-		}
-		aargv[i] = NULL;
-
-		pid_t child = fork();
-		if (child == 0) {
-			signal(SIGINT, SIG_DFL);
-			execvp(aargv[0], aargv);
-			hssh_exit();
-		} else  {
-			signal(SIGINT, another_line);
-			wait(NULL);
-		}
-
-		free(aargv);
+		return FALSE;
 	}
+	return TRUE;
+}
+
+void exec_external_command(int argc, char *argv[])
+{
+	char **aargv = (char**)malloc(sizeof(char*) * (argc + 1));
+	int i;
+	for (i = 0; i < argc; ++i) {
+		aargv[i] = argv[i];
+	}
+	aargv[i] = NULL;
+	execvp(aargv[0], aargv);
+	free(aargv);
 }
 
 void another_line(int fuck_num)
