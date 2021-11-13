@@ -25,7 +25,7 @@
 
 #define MAXUSERIDSIZE	16
 #define MAXHOSTNAMESIZE	16
-#define MAXPATHSIZE	64
+#define MAXPATHSIZE	128
 #define MAXPROMPTSIZE	265
 #define BUFFERSIZE	64
 #define ARGVSIZE	4
@@ -35,6 +35,7 @@
 
 extern bool is_exit;
 extern bool is_signal;
+extern bool back_ground;
 
 extern char *PS1;
 

@@ -12,6 +12,7 @@
 struct hssh_info *info;
 bool is_exit;
 bool is_signal;
+bool back_ground;
 char *command;
 char *PS1;
 
@@ -29,10 +30,17 @@ int main(void)
 		if (!command) {
 			printf("exit\n");
 			break;
+		} else if (strlen(command) == 0) {
+			free(command);
+			command = NULL;
+			continue;
 		}
 		struct tokens tok = split_by_pipe(command);
 		info->single_command_num = tok.splited_command_num;
 		info->single_cmd = split_single_command(tok);
+		if (strcmp(tok.splited_command[tok.token_num - 2], "&") == 0) {
+			back_ground = TRUE;
+		}
 		struct single_command *ssingle_cmd = info->single_cmd;
 		free(command);
 		command = NULL;
@@ -114,6 +122,10 @@ void exec_command_with_pipes(struct single_command *single_cmd)
 
 		if (is_last) {
 			exec_single_command(*single_cmd, FALSE);
+			if (back_ground) {
+				int status;
+				waitpid(child, &status, 0);
+			}
 		} else {
 			child = fork();
 			if (child == 0) {

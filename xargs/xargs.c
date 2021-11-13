@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 			default:
 				if (pos + 1 == arg_size) {
 					arg_size += MAXARGUAMENTSIZE;
-					new_argv[token_pos] = realloc(new_argv[token_pos], sizeof(arg_size));
+					new_argv[token_pos] = realloc(new_argv[token_pos], sizeof(char) * arg_size);
 				}
 				new_argv[token_pos][pos] = ch;
 				++pos;

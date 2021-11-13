@@ -18,7 +18,7 @@ void hssh_init(void)
 
     /* clear the environment */
     clearenv();
-    putenv("PATH=../bin");
+    putenv("PATH=/home/vandark/projects/UniqueStudioLab/week-03/hssh/bin");
     
     /* fill up the shell information */
     info = (struct hssh_info*)malloc(sizeof(struct hssh_info));	
@@ -28,6 +28,7 @@ void hssh_init(void)
     // getcwd(info->work_dir, MAXPATHSIZE);
     // gethostname(info->hostname, MAXUSERIDSIZE);
 
+    back_ground = FALSE;
 }
 
 void hssh_update(void)
@@ -43,4 +44,5 @@ void hssh_update(void)
     PS1 = (char*)malloc(sizeof(char) * MAXPROMPTSIZE);
     sprintf(PS1, COLOR_PURPLE "[hssh] " COLOR_BBLUE "%s" COLOR_NONE "@" "%s" " " COLOR_BWHITE "%s" COLOR_NONE "\n$ ", info->user_id, info->hostname, info->work_dir);
 
+    back_ground = FALSE;
 }
