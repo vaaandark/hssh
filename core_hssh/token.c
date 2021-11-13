@@ -11,7 +11,7 @@
 struct tokens split_by_pipe(char *command)
 {
 	int tokennum = TOKENNUM;
-	int tokensize = tokensize;
+	int tokensize = TOKENSIZE;
 	char **splited_command = (char**)malloc(sizeof(char*) * tokennum);
 	int cur_token_pos = 0;
 	int cur_char_pos = 0;
@@ -23,6 +23,15 @@ struct tokens split_by_pipe(char *command)
 		char ch = command[i];
 		/* 如果一个词未开始输入 */
 		if (has_begun == FALSE) {
+			if (cur_token_pos + 3 > tokennum) {
+				tokennum += TOKENNUM;
+				splited_command = realloc(splited_command, sizeof(char*) * tokennum);
+			}
+			if (cur_char_pos + 2 > tokensize) {
+				tokensize += TOKENSIZE;
+				splited_command[cur_token_pos] = realloc(splited_command[cur_token_pos], sizeof(char) * tokensize);
+			}
+
 			/* 如果这个字符被转义了 */
 			if (is_escape == TRUE) {
 				char *tok = (char*)malloc(sizeof(char) * tokensize);
@@ -81,6 +90,7 @@ struct tokens split_by_pipe(char *command)
 				case ' ':
 				case '\t':
 					splited_command[cur_token_pos][cur_char_pos] = '\0';
+					tokensize = TOKENSIZE;
 					cur_char_pos = 0;
 					// printf("遇到空白字符，当前词的输入结束，当前词为: %s\n", splited_command[cur_token_pos]);
 					++cur_token_pos;
@@ -90,6 +100,7 @@ struct tokens split_by_pipe(char *command)
 				case '|':
 					/* 先结束当前词 */
 					splited_command[cur_token_pos][cur_char_pos] = '\0';
+					tokensize = TOKENSIZE;
 					cur_char_pos = 0;
 					++cur_token_pos;
 					has_begun = FALSE;
@@ -104,6 +115,7 @@ struct tokens split_by_pipe(char *command)
 				case '>':
 				case '<':
 					splited_command[cur_token_pos][cur_char_pos] = '\0';
+					tokensize = TOKENSIZE;
 					cur_char_pos = 0;
 					++cur_token_pos;
 					has_begun = FALSE;

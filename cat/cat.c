@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 		char buff[1024];
 		while (fgets(buff, 1024, file)) {
 			printf("%s", buff);
-			printf("\n");
 		}
 		fclose(file);
 	}
