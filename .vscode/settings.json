@@ -3,6 +3,7 @@
         "get_input.h": "c",
         "token.h": "c",
         "hssh.h": "c",
-        "cmd.h": "c"
+        "cmd.h": "c",
+        "exception": "c"
     }
 }

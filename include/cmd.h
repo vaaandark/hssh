@@ -18,8 +18,11 @@
 #include "pwd.h"
 #include "cd.h"
 #include "ls.h"
+#include "kill.h"
 
 extern struct hssh_info *info;
+
+void exec_command(int argc, char *argv[]);
 
 bool exec_built_in_command(int argc, char *argv[]);
 

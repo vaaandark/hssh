@@ -26,43 +26,43 @@
 #define MAXUSERIDSIZE	16
 #define MAXHOSTNAMESIZE	16
 #define MAXPATHSIZE	64
-#define MAXPROMPTSIZE 265
+#define MAXPROMPTSIZE	265
 #define BUFFERSIZE	64
 #define ARGVSIZE	4
-#define TOKENSIZE	16
+#define TOKENNUM 	16
+#define TOKENSIZE 	16
+
 
 extern bool is_exit;
 extern bool is_signal;
 
 extern char *PS1;
 
-enum redir_type {
-	OUTPUT_REDIRECT = 0,
-	INPUT_REDIRECT
-};
-
-struct pipe_symbol {
-	int pos;
-	struct pipe_symbol *next;
+enum redirct_type {
+	INPUT,
+	OUTPUT
 };
 
 struct redirct_symbol {
-	int pos;
-	struct redirct_symbol *next;
-	enum redir_type type;
+	enum redirct_type type;
 	char *opt_file_name;
+	struct redirct_symbol *next;
 };
 
+struct single_command {
+	char **argv;
+	int argc;
+	struct redirct_symbol *redir_symbl;
+	struct single_command *next;
+};
 
 struct hssh_info {
 	char user_id[MAXUSERIDSIZE];
 	char hostname[MAXHOSTNAMESIZE];
 	char work_dir[MAXPATHSIZE];
 	char home_dir[MAXPATHSIZE];
-	char **argv;
-	char argc;
-	struct pipe_symbol *pipe_symbl;
-	struct redirct_symbol *redir_symbl;
+	struct single_command *single_cmd;
+	int single_command_num;
 };
 
 struct env_path {

@@ -2,7 +2,7 @@
  * Filename: ../include/token.h
  * Auther: Zhang Wenda <vaaandark@foxmail.com>
  * Creation time: 2021-11-02 15:23:01
- * Latest change: 2021-11-03 18:15:01
+ * Latest change: 2021-11-13 00:46:55
  * License: GPL-2.0
  */
 
@@ -14,19 +14,14 @@
 extern struct hssh_info *info;
 extern char *PS1;
 
-struct token {
-	char *part;
-	struct token* next;
+struct tokens {
+	char **splited_command;
+	int splited_command_num;
+	int token_num;
 };
 
-void push_token(struct token **header, struct token **cur_token, struct token *new_token);
+struct tokens split_by_pipe(char *command);
 
-struct redirct_symbol *push_redir_symbl(struct redirct_symbol *redir_cur, int argc, char ch);
-
-struct pipe_symbol *push_pipe_symbl(struct pipe_symbol *pipe_cur, int argc);
-
-struct token *init_token(char *p);
-
-void split(char *command);
+struct single_command *split_single_command(struct tokens tok);
 
 #endif /* TOKEN_H_ */

@@ -18,12 +18,10 @@ void hssh_init(void)
 
     /* clear the environment */
     clearenv();
-    putenv("../bin/");
+    putenv("PATH=../bin");
     
     /* fill up the shell information */
     info = (struct hssh_info*)malloc(sizeof(struct hssh_info));	
-    info->pipe_symbl = NULL;
-    info->redir_symbl = NULL;
     struct passwd *pwd = getpwuid(getuid());
     strcpy(info->user_id, pwd->pw_name);
     strcpy(info->home_dir, pwd->pw_dir);
@@ -36,7 +34,8 @@ void hssh_update(void)
 {
     signal(SIGINT, SIG_IGN);
 
-    is_signal = FALSE;
+    info->single_command_num = 0;
+    info->single_cmd = NULL;
 
     struct passwd *pwd = getpwuid(getuid());
     getcwd(info->work_dir, MAXPATHSIZE);

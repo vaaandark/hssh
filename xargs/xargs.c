@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #define MAXARGUAMENTNUM 16
-#define MAXARGUAMENTSIZE 16
+#define MAXARGUAMENTSIZE 32
 
 typedef unsigned int bool;
 #define TRUE 1
@@ -20,26 +20,26 @@ int main(int argc, char *argv[])
 {
 	int arg_num = MAXARGUAMENTNUM;
 	int arg_size = MAXARGUAMENTSIZE;
-	char **new_argv = (char**)malloc(sizeof(char*) * (arg_num + argc));
+	char **new_argv = (char**)malloc(sizeof(char*) * (arg_num + argc - 1));
 	int i;
-	for (i = 0; i < argc; ++i) {
-		new_argv[i] = argv[i];
+	for (i = 1; i < argc; ++i) {
+		new_argv[i - 1] = argv[i];
 	}
-	char ch = getchar();
-	
+	--i;
+	char ch;
 	bool has_begun = FALSE;
 	int token_pos = i;
 	int pos = 0;
-	while (ch != '\0') {
+	while ((ch= getchar()) != '\n') {
 		if (has_begun) {
 			switch (ch) {
 			case ' ':
 			case '\t':
-			case '\n':
 				new_argv[token_pos][pos] = '\0';
-				int arg_size = MAXARGUAMENTSIZE;
+				arg_size = MAXARGUAMENTSIZE;
 				has_begun = FALSE;
 				pos = 0;
+				++token_pos;
 				break;
 			default:
 				if (pos + 1 == arg_size) {
@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
 			switch (ch) {
 			case ' ':
 			case '\t':
-			case '\n':
 				break;
 			default:
 				char *token = (char*)malloc(sizeof(char) * arg_size);
@@ -64,16 +63,18 @@ int main(int argc, char *argv[])
 					new_argv = realloc(new_argv, sizeof(char*) * (arg_num + argc));
 				}
 				new_argv[token_pos] = token;
-				++token_pos;
+				has_begun = TRUE;
 				++pos;
 				break;
 			}
 		}
-		ch = getchar();
 	}
+	// for (i = 0; new_argv[i] != NULL; ++i) {
+	// 	printf("第%d条命令是: %s\n", i, new_argv[i]);
+	// }
 	new_argv[token_pos + 1] = NULL;
-	execvp(new_argv[1], new_argv + 1);
-	for (i = argc; i < arg_num + argc; ++i) {
+	execvp(new_argv[0], new_argv);
+	for (i = argc - 1; i < arg_num + argc - 1; ++i) {
 		free(new_argv[i]);
 	}
 	free(new_argv);

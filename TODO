@@ -8,16 +8,16 @@ basic :
 	2. exit		x
 	3. cd pwd	x
 advanced :
-	1. kill
+	1. kill		x
 
 ===========
 
 features :
 -----------
 basic :
-	1. <> | &
+	1. <> | &	x
 advanced :
-	1. many <> | exist and the shell can deal with the errors
+	1. many <> | exist and the shell can deal with the errors	x
 
 ==========
 
@@ -29,10 +29,10 @@ basic :
 	3. xargs	x
 	4. touch	x
 	5. mkdir	x
-	all these command files will be restored in a fixed directory.
+	all these command files will be restored in a fixed directory.	x
 
 advanced :
-	1. environment export
+	1. environment export	x
 	2. ls -l
 	3. less
 	4. xargs -d
@@ -42,5 +42,5 @@ advanced :
 
 colors :
 ----------
-	etc...
+	etc...	x
 

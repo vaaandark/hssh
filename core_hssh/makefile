@@ -2,11 +2,11 @@ includes = ../include
 built_ins = ../built_in
 binaries = ../bin
 
-objects = main.o hssh.o cmd.o token.o $(built_ins)/echo.o $(built_ins)/exit.o $(built_ins)/pwd.o $(built_ins)/cd.o
+objects = main.o hssh.o cmd.o token.o $(built_ins)/echo.o $(built_ins)/exit.o $(built_ins)/pwd.o $(built_ins)/cd.o $(built_ins)/kill.o
 
 $(shell mkdir -p ../bin)
 
-all: core ls cat touch mkdir xargs
+all: core ls cat touch mkdir xargs echo
 
 core: $(objects)
 	cc -o core $(objects) -lreadline
@@ -26,6 +26,9 @@ mkdir: ../mkdir/mkdir.o
 xargs: ../xargs/xargs.o
 	cc -o $(binaries)/xargs ../xargs/xargs.o
 
+echo: ../echo/extra_echo.o
+	cc -o $(binaries)/echo ../echo/extra_echo.o
+
 main.o: $(includes)/cmd.h
 
 hssh.o: $(includes)/color.h $(includes)/hsshdef.h
@@ -39,4 +42,4 @@ pwd.o:	$(includes)/hssh.h
 .PHONY: clean
 
 clean:
-	rm -rf core $(binaries) $(objects) ../ls/ls.o ../mkdir/mkdir.o ../touch/touch.o ../cat/cat.o ../xargs/xargs.o
+	rm -rf core $(binaries) $(objects) ../ls/ls.o ../mkdir/mkdir.o ../touch/touch.o ../cat/cat.o ../xargs/xargs.o ../echo/extra_echo.o
