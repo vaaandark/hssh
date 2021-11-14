@@ -144,12 +144,19 @@ struct tokens split_by_pipe(char *command)
 	if (has_begun == TRUE) {
 		splited_command[cur_token_pos][cur_char_pos] = '\0';
 		has_begun = FALSE;
-		++cur_token_pos;
 	}
 
-	splited_command[cur_token_pos] = NULL;
+	if (strcmp(splited_command[cur_token_pos], "&") == 0) {
+		info->back_ground = TRUE;
+		free(splited_command[cur_token_pos]);
+		splited_command[cur_token_pos] = NULL;
+		++cur_token_pos;
+	} else {
+		++cur_token_pos;
+		splited_command[cur_token_pos] = NULL;
+		++cur_token_pos;
+	}
 	++splited_command_num;
-	++cur_token_pos;
 	
 	struct tokens tok = {
 		.splited_command = splited_command,

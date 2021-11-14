@@ -4,6 +4,7 @@
         "token.h": "c",
         "hssh.h": "c",
         "cmd.h": "c",
-        "exception": "c"
+        "exception": "c",
+        "call_cmd.h": "c"
     }
 }

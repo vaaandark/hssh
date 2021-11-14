@@ -2,7 +2,7 @@ includes = ../include
 built_ins = ../built_in
 binaries = ../bin
 
-objects = main.o hssh.o cmd.o token.o $(built_ins)/echo.o $(built_ins)/exit.o $(built_ins)/pwd.o $(built_ins)/cd.o $(built_ins)/kill.o
+objects = main.o hssh.o cmd.o token.o call_cmd.o $(built_ins)/echo.o $(built_ins)/exit.o $(built_ins)/pwd.o $(built_ins)/cd.o $(built_ins)/kill.o
 
 $(shell mkdir -p ../bin)
 
@@ -32,11 +32,12 @@ echo: ../echo/extra_echo.o
 rm: ../rm/rm.o
 	cc -o $(binaries)/rm ../rm/rm.o
 
-main.o: $(includes)/cmd.h
+main.o: $(includes)/call_cmd.h $(includes)/token.h
 
 hssh.o: $(includes)/color.h $(includes)/hsshdef.h
-cmd.o:	$(includes)/exit.h $(includes)/pwd.h $(includes)/cd.h $(includes)/ls.h
+cmd.o:	$(includes)/exit.h $(includes)/pwd.h $(includes)/cd.h $(includes)/ls.h $(includes)/kill.h
 token.o:$(includes)/hssh.h
+call_cmd.o: $(includes)/cmd.h
 
 cd.o:	$(includes)/hssh.h
 exit.o: $(includes)/hsshdef.h

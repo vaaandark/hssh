@@ -35,7 +35,6 @@
 
 extern bool is_exit;
 extern bool is_signal;
-extern bool back_ground;
 
 extern char *PS1;
 
@@ -64,6 +63,7 @@ struct hssh_info {
 	char home_dir[MAXPATHSIZE];
 	struct single_command *single_cmd;
 	int single_command_num;
+	bool back_ground;
 };
 
 struct env_path {

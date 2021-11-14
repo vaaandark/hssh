@@ -19,6 +19,13 @@ void exec_command(int argc, char *argv[])
 		hssh_echo(argc, argv);
 	} else if (strcmp(argv[0], "cd") == 0) {
 		hssh_cd(argc, argv);
+	} else if (strcmp(argv[0], "kill") == 0) {
+		hssh_kill(argc, argv);
+	} else if (strcmp(argv[0], "export") == 0) {
+		int i;
+		for (i = 1; i < argc; ++i) {
+			putenv(argv[i]);
+		}
 	} else {
 		char **aargv = (char**)malloc(sizeof(char*) * (argc + 1));
 		int i;
@@ -54,7 +61,7 @@ bool exec_built_in_command(int argc, char *argv[])
 	return TRUE;
 }
 
-void exec_external_command(int argc, char *argv[])
+void exec_external_command(int argc, char *argv[], bool back_ground)
 {
 	char **aargv = (char**)malloc(sizeof(char*) * (argc + 1));
 	int i;
@@ -71,8 +78,10 @@ void exec_external_command(int argc, char *argv[])
 		}
 		exit(1);
 	} else  {
-		signal(SIGINT, another_line);
-		wait(NULL);
+		if (!back_ground) {
+			signal(SIGINT, another_line);
+			wait(NULL);
+		}
 	}
 	free(aargv);
 }

@@ -26,7 +26,7 @@ void exec_command(int argc, char *argv[]);
 
 bool exec_built_in_command(int argc, char *argv[]);
 
-void exec_external_command(int argc, char *argv[]);
+void exec_external_command(int argc, char *argv[], bool back_ground);
 
 void another_line(int);
 
